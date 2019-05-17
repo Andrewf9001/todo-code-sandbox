@@ -28,12 +28,21 @@ button {
   border-radius: 10px;
   outline: none;
   border: none;
+  color: #00cb78;
 }
 
 .todo-item {
   display: flex;
   align-items: center;
   width: 80%;
+}
+
+.todo-item button {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 250px;
+  color: #00cb78;
+  background-color: black;
 }
 
 .done {

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_marshmallow import Marshmallow
 import os
 
 app = Flask(__name__)
@@ -11,6 +12,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "ap
 CORS(app)
 
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 class Todo(db.Model):
     __tablename__ = "todos"
@@ -22,44 +24,50 @@ class Todo(db.Model):
         self.title = title
         self.done = done
 
+class TodoSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "title", "done")
+
+todo_schema = TodoSchema()
+todos_schema = TodoSchema(many=True)
+
+
+
 @app.route("/todos", methods=["GET"])
 def get_todos():
-    all_todos = db.session.query(Todo.id, Todo.title, Todo.done).all()
-    return jsonify(all_todos)
+    all_todos = Todo.query.all()
+    result = todos_schema.dump(all_todos)
+    return jsonify(result.data)
 
 @app.route("/add-todo", methods=["POST"])
 def add_todo():
-    if request.content_type == "application/json":
-        post_data = request.get_json()
+    title = request.json["title"]
+    done = request.json["done"]
 
-        title = post_data.get("title")
-        done = post_data.get("done")
+    record = Todo(title, done)
 
-        record = Todo(title, done)
-        db.session.add(record)
-        db.session.commit()
-        return jsonify([record.id, record.title, record.done])
-    return jsonify("POST REQUEST DIDN'T WORK")
+    db.session.add(record)
+    db.session.commit()
+
+    todo = Todo.query.get(record.id)
+    return todo_schema.jsonify(todo)
 
 @app.route("/todo/<id>", methods=["PUT"])
 def update_todo(id):
-    if request.content_type == "application/json":
-        put_data = request.get_json()
+    todo = Todo.query.get(id)
 
-        new_title = put_data.get("title")
-        new_done = put_data.get("done")
+    new_title = request.json["title"]
+    new_done = request.json["done"]
 
-        record = db.session.query(Todo).get(id)
-        record.title = new_title
-        record.done = new_done
-        
-        db.session.commit()
-        return jsonify("Update Successful")
-    return jsonify("Update FAILED")
+    todo.title = new_title
+    todo.done = new_done
+    
+    db.session.commit()
+    return todo_schema.jsonify(todo)
 
 @app.route("/todo/<id>", methods=["DELETE"])
 def delete_todo(id):
-    record = db.session.query(Todo).get(id)
+    record = Todo.query.get(id)
     db.session.delete(record)
     db.session.commit()
 

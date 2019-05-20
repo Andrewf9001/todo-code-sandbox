@@ -29,6 +29,7 @@ button {
   outline: none;
   border: none;
   color: #00cb78;
+  background-color: black;
 }
 
 .todo-item {
@@ -40,7 +41,6 @@ button {
 .todo-item button {
   display: flex;
   justify-content: flex-end;
-  margin-left: 250px;
   color: #00cb78;
   background-color: black;
 }

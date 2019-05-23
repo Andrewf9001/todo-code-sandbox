@@ -10,7 +10,7 @@ class TodoItem extends React.Component {
   }
 
   toggleDone = () => {
-    fetch(`http://localhost:5000/todo/${this.props.item.id}`, {
+    fetch(`https://todo-api-list.herokuapp.com/todo/${this.props.item.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -18,11 +18,12 @@ class TodoItem extends React.Component {
         done: !this.state.done
       })
     })
-      .then(this.setState({
-        done: !this.state.done
-      })
-    )
-    .catch(error => console.log(error));
+      .then(
+        this.setState({
+          done: !this.state.done
+        })
+      )
+      .catch(error => console.log(error));
   };
 
   render() {
@@ -30,11 +31,15 @@ class TodoItem extends React.Component {
       <div className="todo-item">
         <input
           type="checkbox"
-          onClick = {this.toggleDone}
+          onClick={this.toggleDone}
           defaultChecked={this.state.done}
         />
-        <p className={this.state.done ? "done" : null}>{this.props.item.title}</p>
-        <button onClick={() => this.props.deleteItem(this.props.item.id)}>X</button>
+        <p className={this.state.done ? "done" : null}>
+          {this.props.item.title}
+        </p>
+        <button onClick={() => this.props.deleteItem(this.props.item.id)}>
+          X
+        </button>
       </div>
     );
   }

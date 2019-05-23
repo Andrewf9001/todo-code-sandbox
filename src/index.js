@@ -17,12 +17,13 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:5000/todos")
+    fetch("https://todo-api-list.herokuapp.com/todos")
       .then(response => response.json())
-      .then(data => this.setState({
-        todos: data
-      })
-    );
+      .then(data =>
+        this.setState({
+          todos: data
+        })
+      );
   }
 
   onChange = event => {
@@ -34,11 +35,7 @@ class App extends React.Component {
   renderTodos = () => {
     return this.state.todos.map(item => {
       return (
-        <TodoItem
-          key={item.id} 
-          item={item}
-          deleteItem={this.deleteItem} 
-        />
+        <TodoItem key={item.id} item={item} deleteItem={this.deleteItem} />
       );
     });
   };
@@ -47,33 +44,35 @@ class App extends React.Component {
     event.preventDefault();
     axios({
       method: "post",
-      url: "http://localhost:5000/add-todo",
+      url: "https://todo-api-list.herokuapp.com/add-todo",
       headers: { "content-type": "application/json" },
       data: {
         title: this.state.todo,
         done: false
       }
     })
-    .then(data => {
-      this.setState({
-        todos: [...this.state.todos, data.data],
-        todo: ""
+      .then(data => {
+        this.setState({
+          todos: [...this.state.todos, data.data],
+          todo: ""
+        });
       })
-    })
-    .catch(error => console.log(error));
+      .catch(error => console.log(error));
   };
 
   deleteItem = id => {
-    fetch(`http://localhost:5000/todo/${id}`, {
+    fetch(`https://todo-api-list.herokuapp.com/todo/${id}`, {
       method: "DELETE"
     })
-    .then(this.setState({
-      todos: this.state.todos.filter(item => {
-        return item.id !== id
-      })
-    }))
-    .catch(error => console.log(error));
-  }
+      .then(
+        this.setState({
+          todos: this.state.todos.filter(item => {
+            return item.id !== id;
+          })
+        })
+      )
+      .catch(error => console.log(error));
+  };
 
   render() {
     return (

@@ -17,7 +17,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    fetch("https://todo-api-list.herokuapp.com/todos")
+    fetch("https://af-mern-demo.herokuapp.com/todos")
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -35,7 +35,7 @@ class App extends React.Component {
   renderTodos = () => {
     return this.state.todos.map(item => {
       return (
-        <TodoItem key={item.id} item={item} deleteItem={this.deleteItem} />
+        <TodoItem key={item._id} item={item} deleteItem={this.deleteItem} />
       );
     });
   };
@@ -44,7 +44,7 @@ class App extends React.Component {
     event.preventDefault();
     axios({
       method: "post",
-      url: "https://todo-api-list.herokuapp.com/add-todo",
+      url: "https://af-mern-demo.herokuapp.com/todos/add-todo",
       headers: { "content-type": "application/json" },
       data: {
         title: this.state.todo,
@@ -61,13 +61,13 @@ class App extends React.Component {
   };
 
   deleteItem = id => {
-    fetch(`https://todo-api-list.herokuapp.com/todo/${id}`, {
+    fetch(`https://af-mern-demo.herokuapp.com/todos/todo/${id}`, {
       method: "DELETE"
     })
       .then(
         this.setState({
           todos: this.state.todos.filter(item => {
-            return item.id !== id;
+            return item._id !== id;
           })
         })
       )

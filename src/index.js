@@ -61,7 +61,7 @@ class App extends React.Component {
   };
 
   deleteItem = id => {
-    fetch(`https://af-mern-demo.herokuapp.com/todos/todo/${id}`, {
+    fetch(`https://af-mern-demo.herokuapp.com/todos/delete/${id}`, {
       method: "DELETE"
     })
       .then(
